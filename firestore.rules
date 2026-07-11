@@ -1,0 +1,157 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Admins are defined by email in an admins collection, OR we can just use exists() or check email
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'workplace.prem@gmail.com';
+    }
+
+    function isEditor() {
+      return isAdmin() || (request.auth != null && request.auth.token.email != null && exists(/databases/$(database)/documents/authors/$(request.auth.token.email)));
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    match /authors/{authorEmail} {
+      allow read: if isEditor();
+      allow write: if isAdmin();
+    }
+
+    function isValidArticle(data) {
+      return data.keys().hasAll(['title', 'content', 'status', 'createdAt', 'updatedAt'])
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 200
+        && data.content is string && data.content.size() > 0
+        && data.status in ['draft', 'published', 'scheduled']
+        && (data.keys().hasAny(['scheduledFor']) ? (data.scheduledFor is timestamp || data.scheduledFor == null) : true)
+        && data.createdAt is timestamp && data.updatedAt is timestamp;
+    }
+
+    match /articles/{articleId} {
+      allow read: if true; // Publicly readable
+      allow create: if isEditor() 
+        && isValidId(articleId)
+        && isValidArticle(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isEditor() 
+        && isValidId(articleId)
+        && isValidArticle(incoming())
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time;
+      allow delete: if isEditor() && isValidId(articleId);
+    }
+
+    match /site_content/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /pages/{pageId} {
+      allow read: if true;
+      allow write: if isAdmin() || isEditor();
+    }
+
+    function isValidCourse(data) {
+      return data.keys().hasAll(['title', 'description', 'createdAt', 'updatedAt'])
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 200
+        && data.description is string && data.description.size() > 0 && data.description.size() <= 5000
+        && data.createdAt is timestamp && data.updatedAt is timestamp;
+    }
+
+    match /courses/{courseId} {
+      allow read: if true; // Publicly readable
+      allow create: if isAdmin() 
+        && isValidId(courseId)
+        && isValidCourse(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isAdmin() 
+        && isValidId(courseId)
+        && isValidCourse(incoming())
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time;
+      allow delete: if isAdmin() && isValidId(courseId);
+    }
+
+    function isValidCertification(data) {
+      return data.keys().hasAll(['title', 'description', 'createdAt', 'updatedAt'])
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 200
+        && data.description is string && data.description.size() > 0 && data.description.size() <= 5000
+        && data.createdAt is timestamp && data.updatedAt is timestamp;
+    }
+
+    match /certifications/{certificationId} {
+      allow read: if true; // Publicly readable
+      allow create: if isAdmin()
+        && isValidId(certificationId)
+        && isValidCertification(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isAdmin() 
+        && isValidId(certificationId)
+        && isValidCertification(incoming())
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time;
+      allow delete: if isAdmin() && isValidId(certificationId);
+    }
+
+    function isValidEnrollment(data) {
+      return data.keys().hasAll(['userId', 'courseId', 'status', 'createdAt', 'updatedAt'])
+        && data.userId is string
+        && data.courseId is string
+        && data.status in ['enrolled', 'completed'];
+    }
+
+    match /enrollments/{enrollmentId} {
+      allow read: if isSignedIn() && (existing().userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() 
+        && isValidId(enrollmentId)
+        && isValidEnrollment(incoming())
+        && incoming().userId == request.auth.uid;
+      allow update: if isSignedIn() 
+        && (existing().userId == request.auth.uid || isAdmin())
+        && isValidEnrollment(incoming())
+        && incoming().userId == existing().userId;
+      allow delete: if isAdmin();
+    }
+
+    function isValidUserCert(data) {
+      return data.keys().hasAll(['userId', 'courseId', 'courseTitle', 'createdAt', 'updatedAt'])
+        && data.userId is string
+        && data.courseId is string
+        && data.courseTitle is string;
+    }
+
+    match /userCertificates/{certificateId} {
+      allow read: if true; // certificates can be viewable publicly
+      allow create: if isSignedIn() 
+        && isValidId(certificateId)
+        && isValidUserCert(incoming())
+        && incoming().userId == request.auth.uid;
+      allow update: if isSignedIn() 
+        && (existing().userId == request.auth.uid || isAdmin())
+        && isValidUserCert(incoming())
+        && incoming().userId == existing().userId;
+      allow delete: if isAdmin();
+    }
+
+    match /queries/{queryId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

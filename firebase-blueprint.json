@@ -1,0 +1,97 @@
+{
+  "entities": {
+    "Article": {
+      "title": "Article",
+      "description": "An article or blog post.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "status": { "type": "string" },
+        "scheduledFor": { "type": "number", "nullable": true },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["title", "content", "status", "createdAt", "updatedAt"]
+    },
+    "Course": {
+      "title": "Course",
+      "description": "A training program offered.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "duration": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "price": { "type": "number" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["title", "description", "createdAt", "updatedAt"]
+    },
+    "Certification": {
+      "title": "Certification",
+      "description": "A certification awarded upon completion.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "iconName": { "type": "string" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["title", "description", "createdAt", "updatedAt"]
+    },
+    "Enrollment": {
+      "title": "Enrollment",
+      "description": "User's enrollment in a course",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "courseId": { "type": "string" },
+        "status": { "type": "string" },
+        "progress": { "type": "number" },
+        "examScore": { "type": "number" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["userId", "courseId", "status", "createdAt", "updatedAt"]
+    },
+    "UserCertificate": {
+      "title": "UserCertificate",
+      "description": "A certificate tied to a user for completing a course.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "courseId": { "type": "string" },
+        "courseTitle": { "type": "string" },
+        "score": { "type": "number" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["userId", "courseId", "courseTitle", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/articles/{articleId}": {
+      "schema": { "$ref": "#/entities/Article" },
+      "description": "Collection of all articles"
+    },
+    "/courses/{courseId}": {
+      "schema": { "$ref": "#/entities/Course" },
+      "description": "Collection of all courses"
+    },
+    "/certifications/{certificationId}": {
+      "schema": { "$ref": "#/entities/Certification" },
+      "description": "Collection of all certifications"
+    },
+    "/enrollments/{enrollmentId}": {
+      "schema": { "$ref": "#/entities/Enrollment" },
+      "description": "Collection of all user course enrollments"
+    },
+    "/userCertificates/{certificateId}": {
+      "schema": { "$ref": "#/entities/UserCertificate" },
+      "description": "Collection of all user's achieved certificates"
+    }
+  }
+}
