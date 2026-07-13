@@ -1,0 +1,31 @@
+<h3 className="text-lg font-bold text-gray-900">Learning Outcomes</h3>
+            <button 
+              type="button" 
+              onClick={addOutcome}
+              className="text-brand-deep-teal text-sm font-semibold flex items-center gap-1 hover:text-brand-navy"
+            >
+              <Plus size={16} /> Add Outcome
+            </button>
+          </div>
+          <div className="space-y-3">
+            {outcomes.map((outcome, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={outcome}
+                  onChange={(e) => handleOutcomeChange(index, e.target.value)}
+                  className="flex-1 px-4 py-2 border border-brand-sage-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-deep-teal"
+                  placeholder="e.g. Mastery of TDI Framework"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeOutcome(index)}
+                  className="p-2 text-red-400 hover:text-red-600 transition-colors disabled:opacity-30"
+                  disabled={outcomes.length <= 1}
+                >
+                  <Trash2 size={20} />
+                </button>
+              </div>
+            ))}
+          </div>
+        

@@ -27,7 +27,7 @@ service cloud.firestore {
     function existing() { return resource.data; }
 
     match /authors/{authorEmail} {
-      allow read: if isEditor();
+      allow read: if isAdmin() || (request.auth != null && request.auth.token.email == authorEmail);
       allow write: if isAdmin();
     }
 
