@@ -40,8 +40,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (snap.exists()) {
               role = 'author';
             }
-          } catch (e) {
-            console.error('Error fetching role:', e);
+          } catch (e: any) {
+            // Ignore permission denied errors for regular users
+            if (e?.code !== 'permission-denied') {
+              console.error('Error fetching role:', e);
+            }
           }
         }
         setUserRole(role as 'admin'|'author'|'user');

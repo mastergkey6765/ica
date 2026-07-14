@@ -10,6 +10,7 @@ import { AuthProvider } from './lib/AuthContext';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import AdminRoute from './components/layout/AdminRoute';
+import ScrollToTop from './components/layout/ScrollToTop';
 
 const About = lazy(() => import('./pages/About'));
 const DrLord = lazy(() => import('./pages/DrLord'));
@@ -44,8 +45,9 @@ const PageLoader = () => (
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AuthProvider>
-        <div className="flex flex-col min-h-screen relative w-full overflow-x-hidden">
+        <div className="flex flex-col min-h-screen relative w-full">
           <Navbar />
           <main className="flex-grow pt-[80px]"> {/* Added padding top for fixed nav */}
             <Suspense fallback={<PageLoader />}>

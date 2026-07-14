@@ -22,9 +22,11 @@ const navLinks: NavLink[] = [
     name: 'About ICA',
     path: '/about',
     children: [
+      { name: 'About ICA', path: '/about' },
       { name: 'Dr. Lord', path: '/dr-lord' },
       { name: 'Leadership', path: '/leadership' },
-      { name: 'Advisory Board', path: '/advisory-board' }
+      { name: 'Advisory Board', path: '/advisory-board' },
+      { name: 'ICA Consultants', path: '/ica-consultants' }
     ]
   },
   {
@@ -33,12 +35,7 @@ const navLinks: NavLink[] = [
   },
   {
     name: 'ICA Academy',
-    path: '/training',
-    children: [
-      { name: 'Fundamentals of TDI Certification', path: '/training#fundamentals' },
-      { name: 'Advanced Train-the-Trainer Certification', path: '/training#advanced' },
-      { name: 'ICA Consultants', path: '/ica-consultants' }
-    ]
+    path: '/training'
   },
   {
     name: 'Community',

@@ -103,7 +103,7 @@ export default function SiteConfigEditor() {
       titlePart2: " Care.",
       subtitle: "We're reshaping dementia care across the board with the Transactional Dementia Intelligence™ (TDI) Model. Practical communication strategies for families, professionals, and organizations.",
       primaryCtaText: "Explore Training Programs",
-      secondaryCtaText: "Book a Free 15-Min Call"
+      secondaryCtaText: "Book a free 30 Min call"
     },
     home_stats: {
       stats: [

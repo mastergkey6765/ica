@@ -81,7 +81,7 @@ export default function HeroSection() {
               className="w-full sm:w-auto flex justify-center items-center gap-2 bg-transparent hover:bg-white/10 text-white border-2 border-white/30 hover:border-white font-bold px-8 py-3.5 rounded-full transition-all backdrop-blur-sm"
             >
               <PhoneCall size={20} />
-              <span>Book a Free 15-Min Call</span>
+              <span>Book a free 30 Min call</span>
             </a>
           </motion.div>
         </div>
